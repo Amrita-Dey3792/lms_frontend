@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 
 import { useNavigate } from "react-router-dom";
 import DashboardCourseCard from "../components/Dashboard/CourseCardDashboard";
+import { ArrowLeftIcon } from "@heroicons/react/24/solid";
 
 const UserDashboard = () => {
   const [enrollments, setEnrollments] = useState([]);
@@ -60,24 +61,38 @@ const UserDashboard = () => {
 
   return (
     <div className="max-w-screen-xl mx-auto p-6">
-      <div className="flex justify-between items-center flex-wrap">
-        <h2 className="text-3xl font-bold mb-6">My Enrolled Courses</h2>
+      {/* Back Button */}
+        <button
+          onClick={() => window.history.back()}
+          className="flex items-center text-indigo-600 hover:text-indigo-800 font-semibold gap-2 transition"
+        >
+          <ArrowLeftIcon className="w-5 h-5" />
+          Back
+        </button>
+      <div className="flex justify-between items-center flex-wrap my-10">
 
-     <div className="mb-6 space-x-2">
-  {['all', 'completed', 'inprogress'].map(f => (
-    <button
-      key={f}
-      onClick={() => setFilter(f)}
-      className={`btn btn-sm rounded-full ${
-        filter === f ? 'btn-primary' : 'btn-outline'
-      }`}
-    >
-      {f === 'all' ? 'All' : f === 'completed' ? 'Completed' : 'In Progress'}
-    </button>
-  ))}
-</div>
+        <h2 className="text-3xl font-bold mb-6 text-grey-900">
+          My Enrolled Courses
+        </h2>
+
+        <div className="mb-6 space-x-2">
+          {["all", "completed", "inprogress"].map((f) => (
+            <button
+              key={f}
+              onClick={() => setFilter(f)}
+              className={`btn btn-sm rounded-full ${
+                filter === f ? "btn-primary" : "btn-outline"
+              }`}
+            >
+              {f === "all"
+                ? "All"
+                : f === "completed"
+                ? "Completed"
+                : "In Progress"}
+            </button>
+          ))}
+        </div>
       </div>
-
 
       {/* Courses List */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -87,17 +102,12 @@ const UserDashboard = () => {
           </p>
         ) : (
           filteredEnrollments.map((enroll) => (
-            // আপনার CourseCard-এ enroll.course, enroll.completed, progress প্রপস হিসেবে পাস করুন
             <div
               key={enroll.id}
               onClick={() => navigate(`/courses/${enroll.course.id}`)}
               className="cursor-pointer"
             >
-              <DashboardCourseCard
-                course={enroll.course}
-                enrollment={enroll}
-                // আপনি চাইলে আরও প্রপস পাঠাতে পারেন
-              />
+              <DashboardCourseCard course={enroll.course} enrollment={enroll} />
             </div>
           ))
         )}

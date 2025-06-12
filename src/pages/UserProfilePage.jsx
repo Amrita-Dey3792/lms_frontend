@@ -1,9 +1,12 @@
 import React, { useState, useContext, useEffect } from "react";
 import { AuthContext } from "../contexts/AuthContext";
-
+import DashboardCourseCard from "../components/Dashboard/CourseCardDashboard";
+import { useNavigate } from "react-router-dom";
+import { ArrowLeftIcon, CheckIcon } from "@heroicons/react/24/solid";
 
 const UserProfilePage = () => {
   const { user: authUser, login } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     first_name: "",
@@ -18,6 +21,8 @@ const UserProfilePage = () => {
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [enrollments, setEnrollments] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (authUser) {
@@ -32,6 +37,33 @@ const UserProfilePage = () => {
       setCourses(authUser.courses || []);
     }
   }, [authUser]);
+
+  useEffect(() => {
+    const token = localStorage.getItem("access_token");
+    if (!token) {
+      setError("You are not logged in");
+      setLoading(false);
+      return;
+    }
+
+    fetch("http://localhost:8000/api/enrollments/", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch enrollments");
+        return res.json();
+      })
+      .then((data) => {
+        setEnrollments(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError(err.message);
+        setLoading(false);
+      });
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -70,62 +102,74 @@ const UserProfilePage = () => {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  setSaving(true);
-  setError("");
+    e.preventDefault();
+    setSaving(true);
+    setError("");
 
-  const token = localStorage.getItem("access_token");
-  if (!token) {
-    setError("You are not logged in.");
-    setSaving(false);
-    return;
-  }
+    const token = localStorage.getItem("access_token");
+    if (!token) {
+      setError("You are not logged in.");
+      setSaving(false);
+      return;
+    }
 
-  const payload = {
-    first_name: formData.first_name,
-    last_name: formData.last_name,
-    username: formData.username,
-    email: formData.email,
-    profile_pic: formData.profile_pic,
+    const payload = {
+      first_name: formData.first_name,
+      last_name: formData.last_name,
+      username: formData.username,
+      email: formData.email,
+      profile_pic: formData.profile_pic,
+    };
+
+    if (formData.password.trim()) {
+      payload.password = formData.password;
+    }
+
+    try {
+      const res = await fetch(
+        `http://localhost:8000/api/users/${authUser.id}/`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          method: "PATCH",
+          body: JSON.stringify(payload),
+        }
+      );
+
+      if (res.status === 401)
+        throw new Error("Unauthorized. Please login again.");
+      if (res.status === 400) {
+        const data = await res.json();
+        const messages = Object.values(data).flat().join(" ");
+        throw new Error(messages || "Validation error.");
+      }
+      if (!res.ok) throw new Error("Failed to update profile.");
+
+      const updatedUser = await res.json();
+      login({ ...authUser, ...updatedUser }, token);
+      alert("Profile updated successfully.");
+      setFormData((prev) => ({ ...prev, password: "" }));
+    } catch (err) {
+      console.log(err);
+      setError(err.message);
+    } finally {
+      setSaving(false);
+    }
   };
 
-  if (formData.password.trim()) {
-    payload.password = formData.password;
-  }
-
-  try {
-    const res = await fetch(`http://localhost:8000/api/users/${authUser.id}/`, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      method: "PATCH",
-      body: JSON.stringify(payload),
-    });
-
-    if (res.status === 401) throw new Error("Unauthorized. Please login again.");
-    if (res.status === 400) {
-      const data = await res.json();
-      const messages = Object.values(data).flat().join(" ");
-      throw new Error(messages || "Validation error.");
-    }
-    if (!res.ok) throw new Error("Failed to update profile.");
-
-    const updatedUser = await res.json();
-    login({ ...authUser, ...updatedUser }, token);
-    alert("Profile updated successfully.");
-    setFormData((prev) => ({ ...prev, password: "" }));
-  } catch (err) {
-    console.log(err);
-    setError(err.message);
-  } finally {
-    setSaving(false);
-  }
-};
-
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white p-6">
-      <div className="max-w-5xl mx-auto space-y-10">
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white p-3 md:p-6">
+      <div className="max-w-screen-xl mx-auto space-y-10">
+        {/* Back Button */}
+        <button
+          onClick={() => window.history.back()}
+          className="flex items-center text-indigo-600 hover:text-indigo-800 font-semibold gap-2 transition"
+        >
+          <ArrowLeftIcon className="w-5 h-5" />
+          Back
+        </button>
         <div className="bg-white rounded-2xl shadow-lg p-8 flex flex-col md:flex-row items-center gap-6">
           {formData.profile_pic ? (
             <img
@@ -147,30 +191,32 @@ const UserProfilePage = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-md p-8">
-          <h3 className="text-2xl font-semibold text-blue-700 mb-6">Enrolled Courses</h3>
-          {courses.length === 0 ? (
+        <div className="bg-white rounded-2xl shadow-md p-4 md:p-8">
+          <h3 className="text-3xl font-semibold text-indigo-700 mb-6">
+            Enrolled Courses
+          </h3>
+          {enrollments.length === 0 ? (
             <p className="text-gray-500">No courses enrolled yet.</p>
           ) : (
-            <ul className="space-y-4">
-              {courses.map((course) => (
-                <li
-                  key={course.id}
-                  className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition"
-                >
-                  <h4 className="text-lg font-bold">{course.name}</h4>
-                  {course.description && (
-                    <p className="text-gray-600 mt-1">{course.description}</p>
-                  )}
-                </li>
+            <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-6">
+              {enrollments.map((enroll) => (
+                <DashboardCourseCard
+                  course={enroll.course}
+                  enrollment={enroll}
+                />
               ))}
-            </ul>
+            </div>
           )}
         </div>
 
         <div className="bg-white rounded-2xl shadow-md p-8">
-          <h3 className="text-2xl font-semibold text-blue-700 mb-6">Edit Profile</h3>
-          <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <h3 className="text-2xl md:text-3xl font-semibold text-indigo-700 mb-6">
+            Edit Profile
+          </h3>
+          <form
+            onSubmit={handleSubmit}
+            className="grid grid-cols-1 md:grid-cols-2 gap-5"
+          >
             <input
               type="text"
               name="first_name"
@@ -236,16 +282,19 @@ const UserProfilePage = () => {
             </div>
 
             {error && (
-              <p className="text-red-600 md:col-span-2 font-semibold mt-2">{error}</p>
+              <p className="text-red-600 md:col-span-2 font-semibold mt-2">
+                {error}
+              </p>
             )}
 
             <button
               type="submit"
               disabled={saving}
-              className="bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition md:col-span-2 flex justify-center items-center gap-2"
+              className="bg-indigo-600 text-white py-3 px-6 rounded-lg hover:bg-indigo-700 transition md:col-span-2 flex justify-center items-center gap-2"
             >
               {saving && <div className="loader"></div>}
               {saving ? "Saving..." : "Save Changes"}
+              <CheckIcon className="w-5 h-5" />
             </button>
           </form>
         </div>
@@ -273,8 +322,12 @@ const UserProfilePage = () => {
           animation: spin 0.6s linear infinite;
         }
         @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
+          0% {
+            transform: rotate(0deg);
+          }
+          100% {
+            transform: rotate(360deg);
+          }
         }
       `}</style>
     </div>
