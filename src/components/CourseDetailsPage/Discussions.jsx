@@ -58,8 +58,8 @@ function Discussions({ courseId }) {
   };
 
   return (
-    <div className=" mx-auto px-6 py-8">
-      <h3 className="text-4xl font-extrabold text-indigo-800 mb-8 border-b-4 border-indigo-600 pb-2">
+    <div>
+      <h3 className="text-3xl text-indigo-600 font-semibold text-grey-600 mb-8">
         Discussions
       </h3>
 
@@ -71,7 +71,7 @@ function Discussions({ courseId }) {
             if (error) setError(null);
           }}
           placeholder="Ask something or share your thoughts..."
-          className="flex-1 rounded-2xl border border-indigo-300 p-4 resize-y focus:outline-none focus:ring-4 focus:ring-indigo-400 transition shadow-sm hover:shadow-md min-h-[100px] font-medium text-gray-800 placeholder-indigo-400"
+          className="flex-1 rounded-2xl border border-indigo-300 p-4 resize-y focus:outline-none focus:ring-1 focus:ring-indigo-400 transition shadow-sm hover:shadow-md min-h-[100px] font-medium text-gray-800 "
           disabled={loadingPost}
           rows={4}
           onKeyDown={(e) => {

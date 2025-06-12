@@ -209,7 +209,7 @@ const UserProfilePage = () => {
           )}
         </div>
 
-        <div className="bg-white rounded-2xl shadow-md p-8">
+        <div className="bg-white rounded-2xl shadow-md p-4 md:p-8">
           <h3 className="text-2xl md:text-3xl font-semibold text-indigo-700 mb-6">
             Edit Profile
           </h3>

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import DashboardCourseCard from "../components/Dashboard/CourseCardDashboard";
 import { ArrowLeftIcon } from "@heroicons/react/24/solid";
+import { div } from "framer-motion/client";
 
 const UserDashboard = () => {
   const [enrollments, setEnrollments] = useState([]);
@@ -60,7 +61,8 @@ const UserDashboard = () => {
     );
 
   return (
-    <div className="max-w-screen-xl mx-auto p-6">
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white p-3 md:p-6">
+      <div className="max-w-screen-xl mx-auto p-6">
       {/* Back Button */}
         <button
           onClick={() => window.history.back()}
@@ -95,7 +97,7 @@ const UserDashboard = () => {
       </div>
 
       {/* Courses List */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1  xl:grid-cols-2 gap-6">
         {filteredEnrollments.length === 0 ? (
           <p className="text-gray-600 col-span-full">
             No courses available for this filter.
@@ -112,6 +114,7 @@ const UserDashboard = () => {
           ))
         )}
       </div>
+    </div>
     </div>
   );
 };
