@@ -16,7 +16,7 @@ export default function ContactForm() {
 
   return (
     <section className="bg-white py-16">
-      <div className="max-w-6xl mx-auto px-4 grid md:grid-cols-2 gap-10 items-center">
+      <div className="max-w-screen-xl mx-auto px-4 grid md:grid-cols-2 gap-10 items-center">
         {/* LMS-related Image */}
         <div className="hidden md:block">
           <img
@@ -65,7 +65,7 @@ export default function ContactForm() {
             </div>
             <button
               type="submit"
-              className="bg-indigo-600 text-white px-6 py-3 rounded font-medium hover:bg-indigo-700 transition w-full"
+              className="bg-indigo-600 text-white px-4 py-3 rounded font-medium hover:bg-indigo-700 transition w-full"
             >
               Send Message
             </button>

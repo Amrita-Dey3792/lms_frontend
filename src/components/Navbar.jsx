@@ -15,7 +15,7 @@ export default function Navbar() {
 
   return (
     <nav className="sticky top-0 z-50 bg-indigo-600 bg-opacity-70 backdrop-blur-md text-white shadow-md">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4">
         <div className="flex justify-between h-16 items-center">
           {/* Logo */}
           <Link
@@ -76,7 +76,9 @@ export default function Navbar() {
                     </div>
                   )}
 
-                  <span className="ml-2 text-sm font-medium">{user.username}</span>
+                  <span className="ml-2 text-sm font-medium">
+                    {user.username}
+                  </span>
                   <svg
                     className="ml-1 h-4 w-4 fill-current"
                     xmlns="http://www.w3.org/2000/svg"
@@ -93,6 +95,14 @@ export default function Navbar() {
                     aria-orientation="vertical"
                     aria-labelledby="user-menu"
                   >
+                    <Link
+                      to="/dashboard"
+                      className="block px-4 py-2 text-sm hover:bg-indigo-100"
+                      role="menuitem"
+                      onClick={() => setProfileOpen(false)}
+                    >
+                      Dashboard
+                    </Link>
                     <Link
                       to="/profile"
                       className="block px-4 py-2 text-sm hover:bg-indigo-100"

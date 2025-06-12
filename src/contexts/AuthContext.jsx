@@ -1,5 +1,5 @@
-import { createContext, useState, useEffect } from 'react';
-import {jwtDecode} from 'jwt-decode'; // ⬅️ Make sure to install: npm install jwt-decode
+import React, { createContext, useState, useEffect } from 'react';
+import {jwtDecode} from 'jwt-decode';
 
 export const AuthContext = createContext();
 
@@ -20,19 +20,18 @@ export function AuthProvider({ children }) {
     if (token && userData) {
       try {
         const decoded = jwtDecode(token);
-        const now = Date.now() / 1000; // Convert to seconds
+        const now = Date.now() / 1000; // seconds
 
         if (decoded.exp < now) {
-          logout(); // Token expired
+          logout(); // token expired
         } else {
           setUser(JSON.parse(userData));
         }
       } catch (error) {
         console.error("Invalid token:", error);
-        logout(); // Token is not valid
+        logout();
       }
     }
-
     setLoading(false);
   }, []);
 

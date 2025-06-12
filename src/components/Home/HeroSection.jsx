@@ -58,7 +58,7 @@ export default function HeroSection() {
         viewport={{ once: true, amount: 0.3 }}
         variants={contentVariants}
       >
-        <h1 className="text-5xl md:text-6xl font-extrabold mb-6 leading-tight drop-shadow-xl">
+        <h1 className="text-4xl md:text-6xl font-extrabold mb-6 leading-tight drop-shadow-xl">
           Master New Skills Online
         </h1>
         <p className="text-xl md:text-2xl mb-8 font-medium drop-shadow-lg">

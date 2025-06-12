@@ -1,38 +1,45 @@
 // src/components/Home/FeaturesSection.jsx
-import React from 'react';
-import { motion } from 'framer-motion';
-import { BookOpenIcon, ChartBarIcon, UsersIcon } from '@heroicons/react/24/outline';
+import React from "react";
+import { motion } from "framer-motion";
+import {
+  BookOpenIcon,
+  ChartBarIcon,
+  UsersIcon,
+} from "@heroicons/react/24/outline";
 
 const features = [
   {
     icon: BookOpenIcon,
-    title: 'Interactive Courses',
-    description: 'Engaging lessons with quizzes and multimedia content to reinforce learning.'
+    title: "Interactive Courses",
+    description:
+      "Engaging lessons with quizzes and multimedia content to reinforce learning.",
   },
   {
     icon: ChartBarIcon,
-    title: 'Progress Tracking',
-    description: 'Visual dashboards to monitor your course completion and achievements.'
+    title: "Progress Tracking",
+    description:
+      "Visual dashboards to monitor your course completion and achievements.",
   },
   {
     icon: UsersIcon,
-    title: 'Community Support',
-    description: 'Join study groups, participate in forums, and collaborate with peers.'
-  }
+    title: "Community Support",
+    description:
+      "Join study groups, participate in forums, and collaborate with peers.",
+  },
 ];
 
 // Animation variants
 const cardVariants = {
   hidden: { opacity: 0, y: 20 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
-  hover: { scale: 1.05, transition: { duration: 0.3 } }
+  hover: { scale: 1.05, transition: { duration: 0.3 } },
 };
 
 export default function FeaturesSection() {
   return (
     <section className="py-16 bg-indigo-50">
-      <div className="max-w-6xl mx-auto px-6">
-        <h2 className="text-4xl font-extrabold text-center text-indigo-700 mb-12">
+      <div className="max-w-screen-xl mx-auto px-4">
+        <h2 className="text-3xl md:text-4xl font-extrabold text-center text-indigo-700 mb-12">
           Why Choose Our LMS?
         </h2>
         <div className="grid md:grid-cols-3 gap-8">
