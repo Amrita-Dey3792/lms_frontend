@@ -41,9 +41,9 @@ export function HowItWorks() {
   ];
 
   return (
-    <section className="py-16 px-4 md:px-8 lg:px-16 bg-gradient-to-r from-indigo-100 to-indigo-50">
+    <section className="py-16 px-4 md:px-8 lg:px-16 bg-indigo-50">
       <div className="max-w-7xl mx-auto text-center">
-        <h2 className="text-3xl sm:text-4xl lg:text-4xl font-extrabold mb-12 text-gray-700">
+        <h2 className="text-3xl sm:text-4xl lg:text-4xl font-bold mb-12 text-gray-700">
           How It Works
         </h2>
 
@@ -53,7 +53,7 @@ export function HowItWorks() {
               key={idx}
               className="bg-white rounded-xl shadow-lg hover:shadow-indigo-300 transition-shadow p-6 sm:p-8 flex flex-col h-full"
             >
-              <Icon className="text-indigo-600 w-10 h-10 sm:w-12 sm:h-12 mb-4 mx-auto" />
+              <Icon className="text-[#3E64FF] w-10 h-10 sm:w-12 sm:h-12 mb-4 mx-auto" />
               <h3 className="text-lg sm:text-xl font-semibold mb-3 text-gray-800">{title}</h3>
               <p className="text-gray-600 flex-grow">{desc}</p>
             </div>

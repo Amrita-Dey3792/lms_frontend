@@ -52,7 +52,7 @@ export default function CourseCategorySection() {
   return (
     <section className="py-16 bg-gray-50">
       <div className="max-w-screen-xl mx-auto px-4">
-        <h2 className="text-3xl font-bold text-center text-gray-900 mb-10">Explore Courses</h2>
+        <h2 className="text-3xl font-bold text-center text-gray-700 mb-10">Explore Courses</h2>
 
         {/* Category Tabs */}
         <div className="flex flex-wrap justify-center gap-4 mb-10">
@@ -63,7 +63,7 @@ export default function CourseCategorySection() {
               className={`px-5 py-2 rounded-full text-sm font-medium transition border
                 ${
                   selectedId === cat.id
-                    ? "bg-indigo-600 text-white border-indigo-600"
+                    ? "bg-[#3E64FF] text-white"
                     : "bg-white text-gray-700 border-gray-300 hover:bg-indigo-100"
                 }`}
             >

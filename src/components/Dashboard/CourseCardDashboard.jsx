@@ -1,7 +1,7 @@
 import React from "react";
 
 const DashboardCourseCard = ({ course, enrollment, onClick }) => {
-  
+
   return (
     <div
       onClick={onClick}
@@ -27,11 +27,11 @@ const DashboardCourseCard = ({ course, enrollment, onClick }) => {
             </span>
           </div>
           <progress
-            className="w-48 h-4 rounded-lg overflow-hidden"
-            value={enrollment.progress || 0}
+            className="w-48 h-4 rounded-lg overflow-hidden progress progress-success"
+            value={course.progress || 0}
             max="100"
           />
-          <span className="text-sm text-gray-700">{enrollment.progress || 0}%</span>
+          <span className="text-sm text-gray-700">{course.progress || 0}%</span>
         </div>
       </div>
     </div>

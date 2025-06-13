@@ -14,7 +14,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="sticky top-0 z-50 bg-indigo-600 bg-opacity-70 backdrop-blur-md text-white shadow-md">
+    <nav className="sticky top-0 z-50 opacity-95 bg-[#3E64FF] bg-opacity-70 backdrop-blur-md text-white shadow-md">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex justify-between h-16 items-center">
           {/* Logo */}
@@ -90,7 +90,7 @@ export default function Navbar() {
 
                 {profileOpen && (
                   <div
-                    className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 text-gray-700 ring-1 ring-black ring-opacity-5"
+                    className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 text-gray-700 "
                     role="menu"
                     aria-orientation="vertical"
                     aria-labelledby="user-menu"

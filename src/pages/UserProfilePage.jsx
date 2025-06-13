@@ -192,7 +192,7 @@ const UserProfilePage = () => {
         </div>
 
         <div className="bg-white rounded-2xl shadow-md p-4 md:p-8">
-          <h3 className="text-3xl font-semibold text-indigo-700 mb-6">
+          <h3 className="text-3xl font-semibold text-[#3E64FF] mb-6">
             Enrolled Courses
           </h3>
           {enrollments.length === 0 ? (
@@ -203,6 +203,7 @@ const UserProfilePage = () => {
                 <DashboardCourseCard
                   course={enroll.course}
                   enrollment={enroll}
+                  onClick={() => navigate(`/courses/${enroll.course.id}`)}
                 />
               ))}
             </div>
@@ -210,7 +211,7 @@ const UserProfilePage = () => {
         </div>
 
         <div className="bg-white rounded-2xl shadow-md p-4 md:p-8">
-          <h3 className="text-2xl md:text-3xl font-semibold text-indigo-700 mb-6">
+          <h3 className="text-2xl md:text-3xl font-semibold text-[#3E64FF] mb-6">
             Edit Profile
           </h3>
           <form
@@ -290,11 +291,11 @@ const UserProfilePage = () => {
             <button
               type="submit"
               disabled={saving}
-              className="bg-indigo-600 text-white py-3 px-6 rounded-lg hover:bg-indigo-700 transition md:col-span-2 flex justify-center items-center gap-2"
+              className="bg-[#3E64FF] ml-auto text-white py-3 px-6 rounded-lg w-fit hover:bg-blue-500 transition md:col-span-2 flex justify-center items-center gap-2"
             >
               {saving && <div className="loader"></div>}
               {saving ? "Saving..." : "Save Changes"}
-              <CheckIcon className="w-5 h-5" />
+            
             </button>
           </form>
         </div>

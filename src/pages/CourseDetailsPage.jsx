@@ -1,16 +1,14 @@
 import React, { useEffect, useState } from "react";
 import ReactPlayer from "react-player";
-import { BookOpenIcon } from "@heroicons/react/24/solid";
 import {
   TagIcon,
   UserCircleIcon,
-  ClockIcon,
   PlayCircleIcon,
   ArrowRightIcon,
 } from "@heroicons/react/24/outline";
+import { CheckIcon } from "@heroicons/react/24/solid";
 import { useParams } from "react-router-dom";
 import Discussions from "../components/CourseDetailsPage/Discussions";
-import { div } from "framer-motion/client";
 
 const CourseDetails = () => {
   const { id } = useParams();
@@ -21,28 +19,69 @@ const CourseDetails = () => {
   const token = localStorage.getItem("access_token");
 
   useEffect(() => {
-    fetch(`http://localhost:8000/api/courses/${id}/`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((res) => {
+    const fetchCourse = async () => {
+      try {
+        const res = await fetch(`http://localhost:8000/api/courses/${id}/`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
         if (res.status === 403 || res.status === 401) {
-          // User is not enrolled or unauthorized
           throw new Error(
             "You must be enrolled in this course to view the details."
           );
         }
+
         if (!res.ok) throw new Error("Failed to fetch course details");
-        return res.json();
-      })
-      .then((data) => {
+
+        const data = await res.json();
         setCourse(data);
-        setLoading(false);
-      })
-      .catch((err) => {
+      } catch (err) {
         setError(err.message);
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+
+    fetchCourse();
   }, [id, token]);
+
+  const markLessonAsCompleted = async (lessonId) => {
+    try {
+      const res = await fetch("http://localhost:8000/api/completed-lessons/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          enrollment: course.enrollment_id,
+          lesson: lessonId,
+        }),
+      });
+
+      if (!res.ok) {
+        const errData = await res.json();
+        console.error("Error completing lesson:", errData);
+        return;
+      }
+
+      // Update course state locally to reflect completed lesson
+      setCourse((prev) => {
+        const updatedModules = prev.modules.map((module) => ({
+          ...module,
+          lessons: module.lessons.map((lesson) =>
+            lesson.id === lessonId ? { ...lesson, is_completed: true } : lesson
+          ),
+        }));
+
+        return { ...prev, modules: updatedModules };
+      });
+
+      console.log("Lesson marked as completed successfully");
+    } catch (error) {
+      console.error("Request failed:", error);
+    }
+  };
 
   if (loading) {
     return (
@@ -63,106 +102,78 @@ const CourseDetails = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white p-3 md:p-6">
       <div className="max-w-screen-xl mx-auto space-y-12">
-        {/* Course Header */}
-        <div className="flex flex-col md:flex-row items-center md:items-start gap-12 bg-white rounded-xl shadow-md p-4 md:p-8">
+        {/* Header */}
+        <div className="flex flex-col md:flex-row gap-10 bg-white rounded-xl shadow-md p-6">
           {course.image && (
             <img
               src={course.image}
               alt={course.title}
-              className="w-full md:w-80 h-64 object-cover rounded-xl shadow-sm hover:scale-105 transition-transform duration-300"
+              className="w-full md:w-80 h-64 object-cover rounded-lg shadow-sm"
             />
           )}
-
-          <div className="flex-1 space-y-6">
-            <h1 className="text-3xl md:text-5xl font-extrabold text-indigo-700 drop-shadow-md">
-              {course.title}
-            </h1>
-            <p className="text-base md:text-lg text-gray-700 leading-relaxed">
-              {course.description}
-            </p>
-
-            <div className="flex flex-wrap gap-5 mt-4">
-              <div class="badge badge-soft badge-accent p-5">
+          <div className="flex-1 space-y-3">
+            <h1 className="text-3xl font-bold text-gray-800">{course.title}</h1>
+            <p className="text-gray-700">{course.description}</p>
+            <div className="flex gap-5 flex-wrap pt-2">
+              <div className="badge badge-accent p-4">
                 <TagIcon className="w-5 h-5" />
-                {course.category?.name || "N/A"}
+                <span className="ml-2">{course.category?.name || "N/A"}</span>
               </div>
-              <div class="badge badge-soft badge-info p-5">
+              <div className="badge badge-info p-4">
                 <UserCircleIcon className="w-5 h-5" />
-                <span>{course.instructor || "N/A"}</span>
+                <span className="ml-2">{course.instructor || "N/A"}</span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Modules & Lessons */}
+        {/* Modules and Lessons */}
         <section>
-          <h2
-            id="course-content-heading"
-            className="text-3xl text-center font-bold mb-6 text-indigo-600 pb-2 tracking-wide gap-2"
-          >
-            Course Content
-          </h2>
-          <div class="divider"></div>
+          <h2 className="text-2xl font-bold text-center mb-6">Course Content</h2>
+          <div className="divider"></div>
 
           {course.modules?.length ? (
             <div className="space-y-10">
               {course.modules.map((module, index) => (
                 <div
                   key={module.id}
-                  className="bg-white rounded-xl shadow-sm p-4 md:p-8 hover:shadow-md transition-shadow duration-500  "
+                  className="bg-white rounded-xl shadow-md p-4 md:p-6"
                 >
-                  {/* Module Header */}
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="bg-green-600 p-3 rounded-xl text-xl font-semibold shadow-sm text-white flex flex-col items-center justify-center">
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="bg-green-600 text-white p-3 rounded-lg text-center font-semibold">
                       Module
-                      <span>{index + 1}</span>
+                      <div>{index + 1}</div>
                     </div>
-                    <h3 className="text-2xl font-semibold tracking-tight flex flex-col gap-2">
-                      {module.title}
-                      <small className="text-sm flex items-center gap-2">
-                        {" "}
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          strokeWidth={1.5}
-                          stroke="currentColor"
-                          className="size-4"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="m15.75 10.5 4.72-4.72a.75.75 0 0 1 1.28.53v11.38a.75.75 0 0 1-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25h-9A2.25 2.25 0 0 0 2.25 7.5v9a2.25 2.25 0 0 0 2.25 2.25Z"
-                          />
-                        </svg>
-                        3 Live Videos
-                      </small>
-                    </h3>
+                    <h3 className="text-xl font-semibold">{module.title}</h3>
                   </div>
 
-                  {/* Lessons */}
                   {module.lessons?.length ? (
-                    <ul className="divide-y divide-indigo-200 rounded-md border border-indigo-100 shadow-sm bg-white">
+                    <ul className="divide-y divide-indigo-100 border border-indigo-200 rounded-md">
                       {module.lessons.map((lesson) => (
                         <li
                           key={lesson.id}
-                          className="flex flex-col gap-2 px-6 py-3 hover:bg-indigo-50 transition-colors cursor-pointer rounded-md"
-                        >
-                          <div
-                            className="flex items-center justify-between  font-medium text-base"
-                            onClick={() =>
-                              setActiveLessonId(
-                                activeLessonId === lesson.id ? null : lesson.id
-                              )
+                          onClick={() => {
+                            if (!lesson.is_completed) {
+                              markLessonAsCompleted(lesson.id);
                             }
-                          >
-                            <div className="flex items-center gap-3">
-                              <ArrowRightIcon className="h-6 w-6" />
+                            setActiveLessonId((prev) =>
+                              prev === lesson.id ? null : lesson.id
+                            );
+                          }}
+                          className="px-4 py-3 hover:bg-indigo-50 cursor-pointer"
+                        >
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              {lesson.is_completed ? (
+                                <CheckIcon className="h-5 w-5 text-green-600" />
+                              ) : (
+                                <ArrowRightIcon className="h-5 w-5 text-gray-600" />
+                              )}
                               <span>{lesson.title}</span>
                             </div>
 
                             {lesson.video_url && (
-                              <div className="flex items-center gap-1 text-indigo-700 font-semibold text-sm">
+                              <div className="flex items-center gap-1 text-indigo-700">
                                 <PlayCircleIcon className="w-5 h-5" />
                                 <span>
                                   {activeLessonId === lesson.id
@@ -173,14 +184,13 @@ const CourseDetails = () => {
                             )}
                           </div>
 
-                          {/* Inline video player */}
                           {activeLessonId === lesson.id && lesson.video_url && (
-                            <div className="mt-2 rounded overflow-hidden shadow-sm">
+                            <div className="mt-4 rounded overflow-hidden">
                               <ReactPlayer
                                 url={lesson.video_url}
-                                controls={true}
+                                controls
                                 width="100%"
-                                height="600px"
+                                height="500px"
                               />
                             </div>
                           )}
@@ -196,12 +206,13 @@ const CourseDetails = () => {
               ))}
             </div>
           ) : (
-            <p className="italic text-gray-500 text-center text-lg">
-              No modules available for this course.
+            <p className="text-center text-gray-500 text-lg">
+              No modules available.
             </p>
           )}
         </section>
 
+        {/* Discussions */}
         <Discussions courseId={course.id} />
       </div>
     </div>

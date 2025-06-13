@@ -39,7 +39,7 @@ export default function FeaturesSection() {
   return (
     <section className="py-16 bg-indigo-50">
       <div className="max-w-screen-xl mx-auto px-4">
-        <h2 className="text-3xl md:text-4xl font-extrabold text-center text-indigo-700 mb-12">
+        <h2 className="text-3xl md:text-4xl font-bold text-center text-gray-700 mb-12">
           Why Choose Our LMS?
         </h2>
         <div className="grid md:grid-cols-3 gap-8">
@@ -56,12 +56,12 @@ export default function FeaturesSection() {
                 whileHover="hover"
               >
                 <div className="flex justify-center mb-4">
-                  <Icon className="h-12 w-12 text-indigo-700" />
+                  <Icon className="h-12 w-12 text-[#3E64FF]" />
                 </div>
-                <h3 className="text-2xl font-semibold text-indigo-900 mb-2 text-center">
+                <h3 className="text-2xl font-semibold text-grey-700 mb-2 text-center">
                   {feature.title}
                 </h3>
-                <p className="text-indigo-700 text-center">
+                <p className="text-grey-600 text-center">
                   {feature.description}
                 </p>
               </motion.div>

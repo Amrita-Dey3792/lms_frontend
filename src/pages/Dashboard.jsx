@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import DashboardCourseCard from "../components/Dashboard/CourseCardDashboard";
 import { ArrowLeftIcon } from "@heroicons/react/24/solid";
 import { div } from "framer-motion/client";
+import { progress } from "framer-motion";
 
 const UserDashboard = () => {
   const [enrollments, setEnrollments] = useState([]);
@@ -46,6 +47,8 @@ const UserDashboard = () => {
     return true;
   });
 
+  console.log(enrollments);
+
   if (loading)
     return (
       <div className="flex justify-center items-center h-screen">
@@ -83,7 +86,7 @@ const UserDashboard = () => {
               key={f}
               onClick={() => setFilter(f)}
               className={`btn btn-sm rounded-full ${
-                filter === f ? "btn-primary" : "btn-outline"
+                filter === f ? "bg-[#3E64FF] text-white" : "btn-outline"
               }`}
             >
               {f === "all"

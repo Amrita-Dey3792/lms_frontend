@@ -58,11 +58,11 @@ function Discussions({ courseId }) {
   };
 
   return (
-    <div>
-      <h3 className="text-3xl text-indigo-600 font-semibold text-grey-600 mb-8">
+    <div className="mt-20">
+      <h3 className="text-3xl text-gray-700 font-semibold text-grey-600  mb-8">
         Discussions
       </h3>
-
+      <div className="divider"></div>
       <div className="flex flex-col sm:flex-row gap-4 mb-8">
         <textarea
           value={newDiscussion}
@@ -84,9 +84,9 @@ function Discussions({ courseId }) {
         <button
           onClick={postDiscussion}
           disabled={!newDiscussion.trim() || loadingPost}
-          className={`self-start rounded-2xl px-7 py-3 font-semibold text-white transition-transform transform ${
+          className={`self-start rounded-2xl px-7  py-3 font-semibold text-white transition-transform transform ${
             newDiscussion.trim() && !loadingPost
-              ? "bg-indigo-700 hover:bg-indigo-800 focus:ring-4 focus:ring-indigo-300 active:scale-95"
+              ? "bg-[#3E64FF] hover:bg-indigo-700 focus:ring-4 focus:ring-indigo-300 active:scale-95"
               : "bg-indigo-300 cursor-not-allowed"
           }`}
         >
@@ -106,20 +106,20 @@ function Discussions({ courseId }) {
         discussions.map((disc) => (
           <div
             key={disc.id}
-            className="mb-8 p-6 bg-white rounded-2xl border border-indigo-200 shadow-md hover:shadow-lg transition-shadow duration-300"
+            className="mb-8 p-6 bg-white rounded-2xl shadow-sm"
           >
             <div className="flex items-start gap-5">
               <img
                 src={disc.user.profile_pic || "https://via.placeholder.com/48"}
                 alt={disc.user.username}
-                className="w-12 h-12 rounded-full object-cover border-2 border-indigo-400 shadow-sm"
+                className="w-12 h-12 rounded-full object-cover  shadow-sm"
               />
               <div className="flex-1">
                 <div className="flex justify-between items-center mb-2">
                   <h4 className="font-semibold text-indigo-900 text-lg">
                     {disc.user.username}
                   </h4>
-                  <span className="text-xs text-indigo-400 italic select-none">
+                  <span className="text-xs select-none font-semibold">
                     {new Date(disc.created_at).toLocaleString()}
                   </span>
                 </div>
@@ -127,7 +127,7 @@ function Discussions({ courseId }) {
                   {disc.content}
                 </p>
 
-                <hr className="border-indigo-200 mb-5" />
+            
                 <Replies discussionId={disc.id} initialReplies={disc.replies} />
               </div>
             </div>

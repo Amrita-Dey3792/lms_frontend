@@ -1,3 +1,4 @@
+import { PaperAirplaneIcon } from "@heroicons/react/24/solid";
 import React, { useState } from "react";
 
 export default function ContactForm() {
@@ -65,8 +66,9 @@ export default function ContactForm() {
             </div>
             <button
               type="submit"
-              className="bg-indigo-600 text-white px-4 py-3 rounded font-medium hover:bg-indigo-700 transition w-full"
+              className="bg-[#3E64FF] flex items-center justify-center gap-3   text-white px-4 py-3 rounded font-medium hover:bg-indigo-600 transition w-full"
             >
+              <PaperAirplaneIcon className="w-5 h-5 -rotate-45"/>
               Send Message
             </button>
           </form>
