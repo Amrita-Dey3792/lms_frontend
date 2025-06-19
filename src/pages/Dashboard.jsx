@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import DashboardCourseCard from "../components/Dashboard/CourseCardDashboard";
 import { ArrowLeftIcon } from "@heroicons/react/24/solid";
-import { div } from "framer-motion/client";
 import { progress } from "framer-motion";
 
 const UserDashboard = () => {
@@ -14,6 +13,7 @@ const UserDashboard = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
     const token = localStorage.getItem("access_token");
     if (!token) {
       setError("You are not logged in");
@@ -66,58 +66,58 @@ const UserDashboard = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white p-3 md:p-6">
       <div className="max-w-screen-xl mx-auto p-6">
-      {/* Back Button */}
+        {/* Back Button */}
         <button
           onClick={() => window.history.back()}
-          className="flex items-center text-indigo-600 hover:text-indigo-800 font-semibold gap-2 transition"
+          className="flex items-center text-[#3E64FF] hover:text-indigo-600 font-semibold gap-2 transition"
         >
           <ArrowLeftIcon className="w-5 h-5" />
           Back
         </button>
-      <div className="flex justify-between items-center flex-wrap my-10">
+        <div className="flex justify-between items-center flex-wrap my-10">
+          <h2 className="text-3xl font-bold mb-6 text-grey-900">My Courses</h2>
 
-        <h2 className="text-3xl font-bold mb-6 text-grey-900">
-          My Enrolled Courses
-        </h2>
+          <div className="mb-6 space-x-2">
+            {["all", "completed", "inprogress"].map((f) => (
+              <button
+                key={f}
+                onClick={() => setFilter(f)}
+                className={`btn btn-sm rounded-full ${
+                  filter === f ? "bg-[#3E64FF] text-white" : "btn-outline"
+                }`}
+              >
+                {f === "all"
+                  ? "All"
+                  : f === "completed"
+                  ? "Completed"
+                  : "In Progress"}
+              </button>
+            ))}
+          </div>
+        </div>
 
-        <div className="mb-6 space-x-2">
-          {["all", "completed", "inprogress"].map((f) => (
-            <button
-              key={f}
-              onClick={() => setFilter(f)}
-              className={`btn btn-sm rounded-full ${
-                filter === f ? "bg-[#3E64FF] text-white" : "btn-outline"
-              }`}
-            >
-              {f === "all"
-                ? "All"
-                : f === "completed"
-                ? "Completed"
-                : "In Progress"}
-            </button>
-          ))}
+        {/* Courses List */}
+        <div className="grid grid-cols-1  xl:grid-cols-2 gap-6">
+          {filteredEnrollments.length === 0 ? (
+            <p className="text-gray-600 col-span-full mx-auto">
+              No courses available for this filter.
+            </p>
+          ) : (
+            filteredEnrollments.map((enroll) => (
+              <div
+                key={enroll.id}
+                onClick={() => navigate(`/courses/${enroll.course.id}`)}
+                className="cursor-pointer"
+              >
+                <DashboardCourseCard
+                  course={enroll.course}
+                  enrollment={enroll}
+                />
+              </div>
+            ))
+          )}
         </div>
       </div>
-
-      {/* Courses List */}
-      <div className="grid grid-cols-1  xl:grid-cols-2 gap-6">
-        {filteredEnrollments.length === 0 ? (
-          <p className="text-gray-600 col-span-full">
-            No courses available for this filter.
-          </p>
-        ) : (
-          filteredEnrollments.map((enroll) => (
-            <div
-              key={enroll.id}
-              onClick={() => navigate(`/courses/${enroll.course.id}`)}
-              className="cursor-pointer"
-            >
-              <DashboardCourseCard course={enroll.course} enrollment={enroll} />
-            </div>
-          ))
-        )}
-      </div>
-    </div>
     </div>
   );
 };

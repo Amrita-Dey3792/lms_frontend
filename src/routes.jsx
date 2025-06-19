@@ -7,6 +7,9 @@ import SignupPage from "./pages/SignupPage";
 import PrivateRoute from "./PrivateRoute";
 import Dashboard from "./pages/Dashboard";
 import CourseDetails from "./pages/CourseDetailsPage";
+import CourseCategorySection from "./components/Home/CourseCategorySection";
+import ContactForm from "./components/Home/ContactForm";
+import About from "./pages/About";
 
 export default function AppRoutes() {
   return (
@@ -14,6 +17,9 @@ export default function AppRoutes() {
       <Route path="/" element={<MainLayout />}>
         <Route index element={<Home />} />
         <Route path="course" element={<Home />} />
+        <Route path="/courses" element={<CourseCategorySection />} />
+        <Route path="/contact" element={<ContactForm />} />
+        <Route path="/about" element={<About />} />
         
         <Route element={<PrivateRoute />}>
           <Route path="courses/:id" element={<CourseDetails />} />

@@ -39,6 +39,7 @@ const UserProfilePage = () => {
   }, [authUser]);
 
   useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
     const token = localStorage.getItem("access_token");
     if (!token) {
       setError("You are not logged in");
@@ -295,7 +296,6 @@ const UserProfilePage = () => {
             >
               {saving && <div className="loader"></div>}
               {saving ? "Saving..." : "Save Changes"}
-            
             </button>
           </form>
         </div>

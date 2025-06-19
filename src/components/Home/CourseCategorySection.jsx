@@ -95,3 +95,5 @@ export default function CourseCategorySection() {
     </section>
   );
 }
+
+

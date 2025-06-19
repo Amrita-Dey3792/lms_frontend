@@ -6,7 +6,7 @@ import {
   PlayCircleIcon,
   ArrowRightIcon,
 } from "@heroicons/react/24/outline";
-import { CheckIcon } from "@heroicons/react/24/solid";
+import { CheckBadgeIcon, CheckIcon, UserIcon } from "@heroicons/react/24/solid";
 import { useParams } from "react-router-dom";
 import Discussions from "../components/CourseDetailsPage/Discussions";
 
@@ -19,6 +19,8 @@ const CourseDetails = () => {
   const token = localStorage.getItem("access_token");
 
   useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+
     const fetchCourse = async () => {
       try {
         const res = await fetch(`http://localhost:8000/api/courses/${id}/`, {
@@ -74,13 +76,29 @@ const CourseDetails = () => {
           ),
         }));
 
-        return { ...prev, modules: updatedModules };
+        // Recalculate total lessons and completed lessons
+        const allLessons = updatedModules.flatMap((m) => m.lessons);
+        const completedCount = allLessons.filter((l) => l.is_completed).length;
+        const totalCount = allLessons.length;
+        const updatedProgress = Math.round((completedCount / totalCount) * 100);
+
+        return {
+          ...prev,
+          modules: updatedModules,
+          progress: updatedProgress,
+        };
       });
 
       console.log("Lesson marked as completed successfully");
     } catch (error) {
       console.error("Request failed:", error);
     }
+  };
+
+  const calculateModuleProgress = (module) => {
+    if (!module.lessons?.length) return 0;
+    const completed = module.lessons.filter((l) => l.is_completed).length;
+    return Math.round((completed / module.lessons.length) * 100);
   };
 
   if (loading) {
@@ -113,15 +131,23 @@ const CourseDetails = () => {
           )}
           <div className="flex-1 space-y-3">
             <h1 className="text-3xl font-bold text-gray-800">{course.title}</h1>
+            <div className="badge badge-soft badge-secondary">
+              <UserIcon className="w-3 h-3" />
+              {course.instructor || "Instructor"}
+            </div>
             <p className="text-gray-700">{course.description}</p>
-            <div className="flex gap-5 flex-wrap pt-2">
-              <div className="badge badge-accent p-4">
-                <TagIcon className="w-5 h-5" />
-                <span className="ml-2">{course.category?.name || "N/A"}</span>
-              </div>
-              <div className="badge badge-info p-4">
-                <UserCircleIcon className="w-5 h-5" />
-                <span className="ml-2">{course.instructor || "N/A"}</span>
+            <div className="flex gap-5 flex-wrap pt-2"></div>
+            <div className="flex items-center gap-3 font-semibold">
+              Course Progress
+              <div className="flex items-center gap-2">
+                <progress
+                  className="w-48 h-4 rounded-lg overflow-hidden progress progress-success"
+                  value={course.progress || 0}
+                  max="100"
+                />
+                <span className="text-sm text-gray-700">
+                  {course.progress || 0}%
+                </span>
               </div>
             </div>
           </div>
@@ -129,7 +155,9 @@ const CourseDetails = () => {
 
         {/* Modules and Lessons */}
         <section>
-          <h2 className="text-2xl font-bold text-center mb-6">Course Content</h2>
+          <h2 className="text-3xl font-semibold text-center mb-6">
+            Course Content
+          </h2>
           <div className="divider"></div>
 
           {course.modules?.length ? (
@@ -139,12 +167,45 @@ const CourseDetails = () => {
                   key={module.id}
                   className="bg-white rounded-xl shadow-md p-4 md:p-6"
                 >
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className="bg-green-600 text-white p-3 rounded-lg text-center font-semibold">
-                      Module
-                      <div>{index + 1}</div>
+                  <div className="flex items-center  md:justify-between flex-wrap gap-4 mb-4">
+                    <div className="flex items-center gap-4 mb-4">
+                      <div className="bg-green-600 text-white p-3 rounded-lg text-center font-semibold">
+                        Module
+                        <div>{index + 1}</div>
+                      </div>
+                      <h3 className="text-2xl font-semibold tracking-tight flex flex-col gap-2">
+                        {module.title}
+                        <small className="text-sm flex items-center gap-2">
+                          {" "}
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={1.5}
+                            stroke="currentColor"
+                            className="size-4"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="m15.75 10.5 4.72-4.72a.75.75 0 0 1 1.28.53v11.38a.75.75 0 0 1-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25h-9A2.25 2.25 0 0 0 2.25 7.5v9a2.25 2.25 0 0 0 2.25 2.25Z"
+                            />
+                          </svg>
+                          {module.lessons?.length} Live Videos
+                        </small>
+                      </h3>
                     </div>
-                    <h3 className="text-xl font-semibold">{module.title}</h3>
+
+                    <div className="flex items-center gap-2">
+                      <progress
+                        className="w-48 h-4 rounded-lg overflow-hidden progress progress-success"
+                        value={calculateModuleProgress(module)}
+                        max="100"
+                      />
+                      <span className="text-sm text-gray-700">
+                        {calculateModuleProgress(module)}%
+                      </span>
+                    </div>
                   </div>
 
                   {module.lessons?.length ? (
@@ -165,7 +226,7 @@ const CourseDetails = () => {
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
                               {lesson.is_completed ? (
-                                <CheckIcon className="h-5 w-5 text-green-600" />
+                                <CheckBadgeIcon className="h-5 w-5 text-green-600" />
                               ) : (
                                 <ArrowRightIcon className="h-5 w-5 text-gray-600" />
                               )}
@@ -198,7 +259,7 @@ const CourseDetails = () => {
                       ))}
                     </ul>
                   ) : (
-                    <p className="italic text-gray-500">
+                    <p className="text-gray-500 text-center">
                       No lessons available in this module.
                     </p>
                   )}

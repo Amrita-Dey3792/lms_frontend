@@ -1,5 +1,10 @@
-import { ArrowRightIcon, BookOpenIcon, UserCircleIcon } from '@heroicons/react/24/solid';
-import { useNavigate } from 'react-router-dom';
+import {
+  ArrowRightIcon,
+  BookOpenIcon,
+  UserCircleIcon,
+  UserIcon,
+} from "@heroicons/react/24/solid";
+import { useNavigate } from "react-router-dom";
 
 export default function CourseCard({ course }) {
   const navigate = useNavigate();
@@ -7,7 +12,10 @@ export default function CourseCard({ course }) {
   return (
     <div className="bg-[#FDFDFD] rounded-xl border border-[#E5E5E5] shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col overflow-hidden">
       <img
-        src={course.image || 'https://via.placeholder.com/400x200?text=Course+Image'}
+        src={
+          course.image ||
+          "https://via.placeholder.com/400x200?text=Course+Image"
+        }
         alt={course.title}
         className="w-full h-48 object-cover"
       />
@@ -21,16 +29,19 @@ export default function CourseCard({ course }) {
         </p>
 
         <div className="flex justify-between flex-wrap gap-2 mb-5">
-          <div className="badge badge-soft badge-primary">{course.category?.name || 'Category'}</div>
-          <div className="badge badge-soft badge-success">{course.instructor || 'Instructor'}</div>
+          <div className="badge badge-soft badge-primary">
+            {course.category?.name || "Category"}
+          </div>
+          <div className="badge badge-soft badge-secondary">
+            <UserIcon className="w-3 h-3" />
+            {course.instructor || "Instructor"}
+          </div>
         </div>
-
         <button
           onClick={() => navigate(`/courses/${course.id}`)}
           className="bg-gray-200 hover:bg-gray-300  font-semibold py-2 rounded-lg transition flex items-center justify-center gap-2"
         >
-          
-          View Details <ArrowRightIcon className='w-5 h-5' />
+          View Details <ArrowRightIcon className="w-5 h-5" />
         </button>
       </div>
     </div>
